@@ -25,13 +25,14 @@
 In a Kleros court with **hidden votes**, voting happens twice:
 
 ```
+            ┌────────────────────┬────────────────────┐ 
   evidence  │       commit       │        vote        │  appeal  │  execution
             │                    │                    │
             │  castCommit        │  castVote          │
             │  keccak256(        │  the choice, plus  │
             │    choice, salt)   │  that same salt    │
             └────────────────────┴────────────────────┘
-                      the salt has to survive this gap
+                 the salt has to survive this gap
 ```
 
 Between those two transactions you must still hold the **salt** that blinded your commitment. Lose
