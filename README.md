@@ -332,7 +332,7 @@ reachable through a dangling link.
 
 ## Roadmap
 
-- [ ] `vote` — the single-transaction path for courts without hidden votes
+- [x] `vote` — the single-transaction path for courts without hidden votes
 - [ ] `recover` — brute-force which choice a stored commitment corresponds to, when the choice
       itself has been lost (the seed regenerates the salt, but never the choice)
 - [ ] Upstreaming into `@kleros/agentkit` once its write milestone lands
