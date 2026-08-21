@@ -8,9 +8,6 @@ importers:
 
   .:
     dependencies:
-      '@kleros/kleros-v2-contracts':
-        specifier: ^2.0.0-rc.2
-        version: 2.0.0-rc.2(@types/node@22.20.1)(ethers@5.8.0)(typescript@5.9.3)(viem@2.55.19(typescript@5.9.3)(zod@4.4.3))(zod@4.4.3)
       incur:
         specifier: ~0.4.19
         version: 0.4.26
@@ -21,6 +18,9 @@ importers:
       '@biomejs/biome':
         specifier: ^2.5.9
         version: 2.5.9
+      '@kleros/kleros-v2-contracts':
+        specifier: ^2.0.0-rc.2
+        version: 2.0.0-rc.2(@types/node@22.20.1)(ethers@5.8.0)(typescript@5.9.3)(viem@2.55.19(typescript@5.9.3)(zod@4.4.3))(zod@4.4.3)
       '@types/node':
         specifier: ^22.20.1
         version: 22.20.1

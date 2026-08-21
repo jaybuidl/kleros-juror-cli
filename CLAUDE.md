@@ -52,14 +52,15 @@ juror has acted, and `passPeriod` is permissionless. Fail loudly and fast; never
 
 ## Stack
 
-`incur` (pinned as `@kleros/agentkit` pins it) · `viem` · `@kleros/kleros-v2-contracts` · Node >=22.
+`incur` (pinned as `@kleros/agentkit` pins it) · `viem` · Node >=22. Runtime truth: `package.json`.
 
-Contract handles come from `getContractsViem({ publicClient, deployment: "mainnet" })`. That export
-carries the genuinely **deployed** ABI, not one compiled from `master` — verified against both
-fingerprints in `01 §2` (zero custom errors, singular `getDegreeOfCoherence`). A regression test
-asserts those fingerprints, because a package bump that regenerates from `master` would silently
-violate `01 §2`. Do **not** add `@kleros/kleros-sdk`; it is a higher-level layer this scope does not
-need and it drags a conflicting zod major.
+Addresses and ABI fragments are **pinned** in `src/core/deployment.ts`, not imported.
+`@kleros/kleros-v2-contracts` is a **devDependency** and appears in exactly one file,
+`deployment.test.ts`, which asserts every pinned address and fragment against its `mainnet` export
+plus both `01 §2` fingerprints. Do not replace the fragments with a package import — `ADR-0005`
+explains why, including the ESM packaging defect that makes it fail at runtime anyway. Do **not**
+add `@kleros/kleros-sdk`; it is a higher-level layer this scope does not need and it drags a
+conflicting zod major.
 
 RPC only — no subgraph, no log scanning. Every pre-flight read in `01 §7` is a plain `eth_call`.
 
