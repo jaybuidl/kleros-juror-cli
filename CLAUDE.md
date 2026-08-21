@@ -19,7 +19,7 @@ pnpm test         # unit + fork tests (fork tests skip when no fork is reachable
 pnpm test:fork    # spawn an Arbitrum One fork on :8546 and run only the fork tests
 pnpm typecheck
 pnpm lint         # biome check .   (`pnpm exec biome check --write .` to fix)
-pnpm dev -- status --dispute 154 --round 0 --votes 0 --address 0x...
+pnpm dev status --dispute 154 --round 0 --votes 0 --address 0x...   # no `--`: it reaches the CLI
 ```
 
 ## Invariants
@@ -79,7 +79,10 @@ Layout mirrors `@kleros/agentkit` so the eventual port is close to a file move: 
 ## Domain docs
 
 `CONTEXT.md` is the glossary — use its terms, avoid the synonyms it lists. `docs/adr/` records the
-four decisions that a reader would otherwise question. Convention: `docs/agents/domain.md`.
+five decisions that a reader would otherwise question. Convention: `docs/agents/domain.md`.
+
+`README.md` is the only doc written for a stranger. It restates the command surface, the option
+defaults and the JSON envelope — so a change to any of those is a change to it too.
 
 ## Reference material
 
