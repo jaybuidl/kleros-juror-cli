@@ -1,4 +1,4 @@
-# Kleros juror bot
+# Kleros juror CLI
 
 The language of committing and revealing a Kleros v2 juror vote on Arbitrum One. This tool turns a
 decision that has already been made into a transaction; it does not make the decision.

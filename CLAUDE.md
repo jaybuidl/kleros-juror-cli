@@ -1,4 +1,4 @@
-# kleros-juror-bot
+# kleros-juror-cli
 
 Headless TypeScript CLI that commits and reveals Kleros v2 juror votes on **Arbitrum One**
 (chain 42161). One-shot commands, no daemon. Binary: `kleros-juror`.

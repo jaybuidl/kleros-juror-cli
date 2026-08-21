@@ -1,5 +1,5 @@
 {
-  "name": "@kleros/juror-bot",
+  "name": "kleros-juror-cli",
   "version": "0.1.0",
   "type": "module",
   "description": "Headless CLI for committing and revealing Kleros v2 juror votes on Arbitrum One",
