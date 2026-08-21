@@ -45,5 +45,12 @@
     "ignoredBuiltDependencies": [
       "@arbitrum/nitro-contracts"
     ]
+  },
+  "main": "dist/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
   }
 }
