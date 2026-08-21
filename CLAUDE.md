@@ -1,38 +1,76 @@
 # kleros-juror-bot
 
-Headless TypeScript CLI for committing and revealing Kleros v2 juror votes on **Arbitrum One**
-(chain 42161). One-shot commands, no daemon. Signs with a local EOA via viem.
-Not yet scaffolded — no `package.json`.
+Headless TypeScript CLI that commits and reveals Kleros v2 juror votes on **Arbitrum One**
+(chain 42161). One-shot commands, no daemon. Binary: `kleros-juror`.
 
-**The primary consumer is an LLM juror agent, not a human at a terminal.** The spec in
-`docs/research/` was written assuming a human operator wrapping the CLI in cron, and several of its
-defaults invert under an agent consumer. Most importantly the confirmation gate in `03 §7` is
-skipped when stdin is not a TTY, so for the primary consumer it never fires and cannot be the check
-before an irreversible broadcast. Whether a human surface remains a deliverable, and what replaces
-that gate, are open — see `docs/adr/` once recorded.
+**This tool casts a vote; it does not decide one.** The choice is always an input. Nothing here
+reads evidence, resolves a dispute template, or discovers draws — see `CONTEXT.md` for the
+casting/deciding line and `docs/adr/0001` for why it falls there.
+
+**The primary consumer is an autonomous LLM juror agent, not a human at a terminal.** The spec in
+`docs/research/` assumes a human operator wrapping the CLI in cron; several of its defaults invert
+under an agent consumer. Where they do, `docs/adr/` records the deviation and the spec citation it
+overrides. A human is a debug surface only, so the CLI must be self-documenting.
+
+Status: not yet scaffolded — no `package.json`.
 
 ## Invariants
 
 Guard rails that hold before you've read anything else. Each cites `docs/research/`, which is
-absent in a fresh clone (see Reference material) — so they live here too.
+absent in a fresh clone (see Reference material) — so they live here too. Where an ADR overrides
+the spec, the ADR wins and is named.
 
-- **The salt is recomputed, never stored.** `reveal` re-derives it from the seed via HMAC. It MUST
-  NOT read a salt from `commits.jsonl`, which is a non-authoritative audit record. `02 §2, §10`
+- **The salt is recomputed, never stored.** `reveal` re-derives it. It MUST NOT read a salt from
+  `commits.jsonl`, which is a non-authoritative audit record. `02 §2, §10`
+- **The seed is derived from a wallet signature and never persisted** — `keccak256(sign(...))`,
+  proved deterministic by signing twice at startup. The **signer address and seed source are locked
+  for the life of any in-flight commitment**; changing either yields an unrevealable vote.
+  `ADR-0003`, overriding `02 §2`
 - **Vote IDs canonicalise identically in every command** — dedupe, **numeric** ascending sort,
   decimal, comma-joined; the same canonical array goes on chain. Lexicographic sort puts `10`
   before `9` and yields an unrevealable commitment. `02 §3`
 - **`commit`, `reveal` and `vote` are never substituted for one another** — not by the CLI, not by
-  an agent. Each has a different irreversible on-chain cost. Pre-flight MUST read `hiddenVotes` and
-  refuse the wrong subcommand, so a bad pick costs a local error and not a vote. `03 §2, §7`
-- **Evidence is attacker-controlled input.** Everything an agent reads from a dispute is authored by
-  parties with an interest in the outcome. Whatever reasons over evidence MUST NOT reach the signing
-  path directly. The spec does not cover this; it assumed a human operator.
+  an agent, and not by an upstream field. `kleros juror draws` supplies `actionRequired` as a
+  **hint**; pre-flight MUST independently read `hiddenVotes` and the period and refuse a mismatch.
+  `03 §2, §7`
+- **Evidence never enters this process.** Everything an agent reads from a dispute is authored by
+  parties with an interest in the outcome. The separation is structural, not procedural: attacker-
+  authored text has no path to the signing key because this tool never reads any.
 - **Never print the seed. Never print the salt during `commit`** — logging it defeats the hiding. `03 §6`
 - **Chain 42161 only, Classic and Gated kits only.** Refuse anything else; refuse Shutter by name. `00`
-- **Simulate every state-changing call before broadcasting.** `04 §3.1`
+- **Simulate every state-changing call, and broadcast only on explicit `--broadcast`.** The default
+  is plan → simulate → stop. There is no human confirmation gate and nothing upstream provides one.
+  `04 §3.1`, `ADR-0004` overriding `03 §7`
+- **Failure semantics live in the JSON payload, not the exit code.** The consuming agent sees
+  stdout and stderr merged into one middle-out-truncated buffer and an effectively binary exit
+  status. So: JSON on stdout, stderr silent unless `--verbose`, output kept small, and a stable
+  `code` field on every error. Exit codes stay per `03 §5` for shell callers, but they are not the
+  machine contract.
 
 Vote windows are short (court 34: 1800s) and **not guaranteed** — both periods end early once every
 juror has acted, and `passPeriod` is permissionless. Fail loudly and fast; never retry quietly.
+
+## Stack
+
+`incur` (pinned as `@kleros/agentkit` pins it) · `viem` · `@kleros/kleros-v2-contracts` · Node >=22.
+
+Contract handles come from `getContractsViem({ publicClient, deployment: "mainnet" })`. That export
+carries the genuinely **deployed** ABI, not one compiled from `master` — verified against both
+fingerprints in `01 §2` (zero custom errors, singular `getDegreeOfCoherence`). A regression test
+asserts those fingerprints, because a package bump that regenerates from `master` would silently
+violate `01 §2`. Do **not** add `@kleros/kleros-sdk`; it is a higher-level layer this scope does not
+need and it drags a conflicting zod major.
+
+RPC only — no subgraph, no log scanning. Every pre-flight read in `01 §7` is a plain `eth_call`.
+
+Layout mirrors `@kleros/agentkit` so the eventual port is close to a file move: framework-free
+`src/core/` returning `KlerosResult<T>`, thin `src/commands/` owning incur and the CTA blocks.
+`ADR-0001`
+
+## Domain docs
+
+`CONTEXT.md` is the glossary — use its terms, avoid the synonyms it lists. `docs/adr/` records the
+four decisions that a reader would otherwise question. Convention: `docs/agents/domain.md`.
 
 ## Reference material
 
@@ -50,9 +88,11 @@ live against Arbitrum. Start at its `README.md`. Order: `00` orientation → `01
 vectors) → `03` CLI surface → `04` relaying → `05` verification. Read `03` knowing it targets a
 human operator; see the note above.
 
-`coinbase-agentkit/` is upstream `coinbase/agentkit` @ 0.11.0, for reading `ActionProvider` and
-`ViemWalletProvider` source. Whether this tool ships as an action provider is **undecided**, and is
-the first decision to settle given the agent-first framing — see `docs/adr/` once recorded.
+`coinbase-agentkit/` is upstream `coinbase/agentkit` @ 0.11.0. **This tool does not ship as an
+action provider** — `ADR-0002`. The symlink stays for reading source if that is ever revisited.
+
+Other Kleros research artifacts exist outside this repo (a PRD, an agent-authored best-practices
+document). `docs/research/` **governs**; the PRD is obsolete and anything else is advisory only.
 
 ## Agent skills
 
@@ -63,7 +103,3 @@ Issues live as markdown files under `.scratch/<feature-slug>/`. See `docs/agents
 ### Triage labels
 
 The five canonical triage roles, each label string equal to its name. See `docs/agents/triage-labels.md`.
-
-### Domain docs
-
-Single-context: `CONTEXT.md` plus `docs/adr/` at the repo root. See `docs/agents/domain.md`.

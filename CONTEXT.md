@@ -1,0 +1,91 @@
+# Kleros juror bot
+
+The language of committing and revealing a Kleros v2 juror vote on Arbitrum One. This tool turns a
+decision that has already been made into a transaction; it does not make the decision.
+
+## Language
+
+### The scope boundary
+
+**Casting**:
+Turning an already-chosen choice into an on-chain `castCommit` or `castVote`. The whole of this
+tool's job.
+_Avoid_: voting (ambiguous — `vote` is also a subcommand and a period)
+
+**Deciding**:
+Choosing which choice to vote for, by reasoning over a dispute and its evidence. Happens upstream,
+outside this repo, and its output reaches this tool only as `--choice`.
+_Avoid_: analysis, judging, reasoning
+
+**Discovery**:
+Finding which disputes an address is drawn in, and which vote IDs it holds. Supplied upstream by
+`kleros juror draws`; never performed here.
+_Avoid_: monitoring, polling
+
+### The vote
+
+**Choice**:
+The ruling option a juror selects, from `0` to `numberOfChoices`. `0` means refuse to arbitrate and
+is always valid.
+_Avoid_: ruling, answer, verdict, vote
+
+**Salt**:
+The `uint256` that blinds a commitment. Always recomputed from the seed, never stored or read back.
+_Avoid_: nonce, blinding factor
+
+**Seed**:
+The 32 bytes every salt derives from, obtained by signing a fixed message with the juror's key. Held
+only in memory.
+_Avoid_: master key, secret (it authorises nothing and holds no funds)
+
+**Commitment**:
+`keccak256(abi.encodePacked(uint256 choice, uint256 salt))` — the `bytes32` published during the
+commit period.
+_Avoid_: hash, commit hash, vote hash
+
+**Vote ID**:
+The index of a single vote within a round. One drawn juror may hold several, and votes them
+together in one transaction.
+_Avoid_: draw ID, ballot
+
+**Canonical vote IDs**:
+A vote ID list deduplicated, sorted numerically ascending, rendered decimal and comma-joined. The
+one form used both to derive the salt and as the on-chain array — the two can never diverge.
+
+**Justification**:
+The free text accompanying a reveal. Emitted in the `VoteCast` event, never stored on chain, and
+not part of the commitment.
+
+### The chain
+
+**Juror**:
+The address that owns a vote. It must be the transaction sender; there is no delegation or
+meta-transaction path.
+_Avoid_: voter, operator, agent
+
+**Dispute kit**:
+The pluggable contract implementing a voting method. Classic and Gated are accepted; Shutter is
+refused by name.
+_Avoid_: DK (except in the salt `info` string, where it is fixed)
+
+**Core dispute ID**:
+The global dispute identifier in `KlerosCore.disputes[]`. What `--dispute` takes. Distinct from the
+kit-internal local dispute ID, which is only needed to read `numberOfChoices`.
+_Avoid_: dispute ID (unqualified — the ambiguity is the trap)
+
+**Round index**:
+The zero-based index of an appeal round within a dispute. An appeal re-draws the panel, so the same
+address can hold votes in more than one round of the same dispute.
+
+**Period**:
+One of `evidence`, `commit`, `vote`, `appeal`, `execution`. `commit` is entered only in courts with
+`hiddenVotes`.
+_Avoid_: phase, stage
+
+**Deadline**:
+`lastPeriodChange + timesPerPeriod[period]`. An upper bound, never an entitlement — both the commit
+and the vote period end early once every juror has acted, and `passPeriod` is permissionless.
+
+**Neo**:
+The name of the Arbitrum One production deployment, as in `DisputeKitClassicNeo`. A deployment
+name, not a contract.
