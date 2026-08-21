@@ -1,6 +1,6 @@
-import { getAddress, isAddress } from "viem";
 import type { Address } from "viem";
-import { err, ok, type KlerosResult } from "./result.js";
+import { getAddress, isAddress } from "viem";
+import { err, type KlerosResult, ok } from "./result.js";
 
 /**
  * The deployed surface on Arbitrum One — addresses from `01 §1`, function

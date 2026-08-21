@@ -10,13 +10,13 @@ import {
   SHUTTER_DISPUTE_KITS,
 } from "./deployment.js";
 
-type AbiParam = { name?: string; type: string };
+type AbiParam = { readonly name?: string; readonly type: string };
 type AbiEntry = {
-  type: string;
-  name?: string;
-  stateMutability?: string;
-  inputs?: AbiParam[];
-  outputs?: AbiParam[];
+  readonly type: string;
+  readonly name?: string;
+  readonly stateMutability?: string;
+  readonly inputs?: readonly AbiParam[];
+  readonly outputs?: readonly AbiParam[];
 };
 type MainnetDeployment = Record<string, unknown>;
 
