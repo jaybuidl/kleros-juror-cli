@@ -12,7 +12,15 @@ casting/deciding line and `docs/adr/0001` for why it falls there.
 under an agent consumer. Where they do, `docs/adr/` records the deviation and the spec citation it
 overrides. A human is a debug surface only, so the CLI must be self-documenting.
 
-Status: not yet scaffolded — no `package.json`.
+Status: Slice A shipped — `status`, `salt`, `commit`, `reveal`. `vote` and `recover` are next.
+
+```
+pnpm test         # unit + fork tests (fork tests skip when no fork is reachable)
+pnpm test:fork    # spawn an Arbitrum One fork on :8546 and run only the fork tests
+pnpm typecheck
+pnpm lint         # biome check .   (`pnpm exec biome check --write .` to fix)
+pnpm dev -- status --dispute 154 --round 0 --votes 0 --address 0x...
+```
 
 ## Invariants
 

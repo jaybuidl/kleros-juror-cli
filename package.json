@@ -19,7 +19,8 @@
     "test:watch": "vitest",
     "lint": "biome check .",
     "format": "biome format . --write",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:fork": "anvil --fork-url ${ARBITRUM_RPC:-https://arb1.arbitrum.io/rpc} --port 8546 --silent & ANVIL=$!; sleep 6; vitest run src/__tests__/fork.test.ts; STATUS=$?; kill $ANVIL; exit $STATUS"
   },
   "dependencies": {
     "incur": "~0.4.19",
