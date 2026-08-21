@@ -1,0 +1,8 @@
+# Symlink to a read-only reference checkout outside the repo; local convenience only.
+/coinbase-agentkit
+
+# Personal Claude Code settings; the shared ones live in .claude/settings.json.
+.claude/settings.local.json
+
+# Symlink to juror CLI design docs in the kleros-v2 checkout; local convenience only.
+/docs/research
