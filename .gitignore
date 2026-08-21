@@ -6,3 +6,5 @@
 
 # Symlink to juror CLI design docs in the kleros-v2 checkout; local convenience only.
 /docs/research
+node_modules
+dist

@@ -1,0 +1,48 @@
+{
+  "name": "@kleros/juror-bot",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Headless CLI for committing and revealing Kleros v2 juror votes on Arbitrum One",
+  "license": "MIT",
+  "bin": {
+    "kleros-juror": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "skills/kleros-juror/SKILL.md",
+    "README.md"
+  ],
+  "scripts": {
+    "dev": "tsx src/cli.ts",
+    "build": "tsup",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "biome check .",
+    "format": "biome format . --write",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@kleros/kleros-v2-contracts": "^2.0.0-rc.2",
+    "incur": "~0.4.19",
+    "viem": "^2.55.19"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.5.9",
+    "@types/node": "^22.20.1",
+    "tsup": "^8.5.1",
+    "tsx": "^4.23.12",
+    "typescript": "~5.9.3",
+    "vitest": "^4.1.11"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ],
+    "ignoredBuiltDependencies": [
+      "@arbitrum/nitro-contracts"
+    ]
+  }
+}
