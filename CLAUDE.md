@@ -13,6 +13,8 @@ under an agent consumer. Where they do, `docs/adr/` records the deviation and th
 overrides. A human is a debug surface only, so the CLI must be self-documenting.
 
 Status: Slice A shipped — `status`, `salt`, `commit`, `reveal`. `vote` and `recover` are next.
+Published to npm as `kleros-juror-cli@0.1.0`; no transaction has been broadcast in production yet.
+A published version makes a salt-derivation change breaking for installs beyond this machine.
 
 ```
 pnpm test             # unit + fork tests (each fork suite skips when its prerequisite is absent)
