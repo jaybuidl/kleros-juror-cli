@@ -8,7 +8,7 @@
 
 <p align="center">
   <img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-blue.svg">
-  <img alt="Node >= 22" src="https://img.shields.io/badge/node-%3E%3D22-3c873a.svg">
+  <img alt="Node %3E%3D22-3c873a" src="https://img.shields.io/badge/node-%3E%3D22-3c873a.svg">
   <img alt="Chain: Arbitrum One" src="https://img.shields.io/badge/chain-Arbitrum%20One%20(42161)-28a0f0.svg">
   <img alt="Status: alpha" src="https://img.shields.io/badge/status-alpha-orange.svg">
 </p>
