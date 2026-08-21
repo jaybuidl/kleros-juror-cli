@@ -76,11 +76,15 @@ export function resolveDisputeKit(input: string): KlerosResult<ResolvedDisputeKi
 
   const address = getAddress(key);
 
+  const SHUTTER_LABELS: Record<string, string> = {
+    shutter: "DisputeKitShutterNeo",
+    gatedShutter: "DisputeKitGatedShutterNeo",
+  };
   for (const [name, shutter] of Object.entries(SHUTTER_DISPUTE_KITS)) {
     if (getAddress(shutter) === address) {
       return err(
         "SHUTTER_DISPUTE_KIT",
-        `${address} is the ${name} Shutter dispute kit. Shutter uses a different hidden-vote ` +
+        `${address} is ${SHUTTER_LABELS[name] ?? name}. Shutter is a different hidden-vote ` +
           "scheme with different cryptography, and this tool will not guess at it.",
       );
     }

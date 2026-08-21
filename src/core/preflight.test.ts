@@ -20,6 +20,7 @@ const facts = (over: Partial<PreflightFacts> = {}): PreflightFacts => ({
   period: "commit",
   hiddenVotes: true,
   deadline: 2_000n,
+  periodDuration: 2_700n,
   now: 1_000n,
   numberOfChoices: 2n,
   numberOfRounds: 1n,

@@ -1,8 +1,8 @@
+import type { Address, Hex, PrivateKeyAccount, PublicClient } from "viem";
 import { createWalletClient, formatEther, http } from "viem";
 import { arbitrum } from "viem/chains";
-import type { Address, Hex, PrivateKeyAccount, PublicClient } from "viem";
 import { DISPUTE_KIT_ABI } from "./deployment.js";
-import { err, ok, type KlerosResult } from "./result.js";
+import { err, type KlerosResult, ok } from "./result.js";
 import { decodeRevert } from "./reverts.js";
 
 /** The gas buffer every bot in the Kleros repo uses (`04 §3.2`). */
@@ -53,7 +53,13 @@ export type BroadcastResult =
       gasUsed: string;
       effectiveGasPrice: string;
     } & FeePlan)
-  | ({ status: "reverted"; broadcast: true; txHash: Hex; blockNumber: string; gasUsed: string } & FeePlan)
+  | ({
+      status: "reverted";
+      broadcast: true;
+      txHash: Hex;
+      blockNumber: string;
+      gasUsed: string;
+    } & FeePlan)
   | ({ status: "unknown"; broadcast: true; txHash: Hex } & FeePlan);
 
 /**

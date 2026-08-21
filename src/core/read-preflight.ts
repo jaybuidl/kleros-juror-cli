@@ -6,8 +6,8 @@ import {
   KLEROS_CORE_ABI,
   type ResolvedDisputeKit,
 } from "./deployment.js";
-import { deadlineFor, periodFromIndex, type PreflightFacts, type VoteState } from "./preflight.js";
-import { err, ok, type KlerosResult } from "./result.js";
+import { deadlineFor, type PreflightFacts, periodFromIndex, type VoteState } from "./preflight.js";
+import { err, type KlerosResult, ok } from "./result.js";
 
 /**
  * viem cannot infer across a multicall batch mixing two ABIs and several argument
@@ -179,10 +179,10 @@ export async function readPreflightFacts(
     period: period.data,
     hiddenVotes,
     deadline: deadlineFor(Number(periodIndex), lastPeriodChange, timesPerPeriod),
+    periodDuration: timesPerPeriod[Number(periodIndex)] ?? null,
     now: block.timestamp,
     numberOfChoices,
-    numberOfRounds:
-      roundsResult?.status === "success" ? (roundsResult.result as bigint) : 0n,
+    numberOfRounds: roundsResult?.status === "success" ? (roundsResult.result as bigint) : 0n,
     activeForKit,
     disputeKitVersion:
       versionResult?.status === "success" ? (versionResult.result as string) : "unknown",

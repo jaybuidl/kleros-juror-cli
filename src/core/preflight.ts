@@ -37,6 +37,8 @@ export type PreflightFacts = {
   hiddenVotes: boolean;
   /** `lastPeriodChange + timesPerPeriod[period]`, or null in `execution` (`01 §7`). */
   deadline: bigint | null;
+  /** `timesPerPeriod[period]`, the nominal window length. Null in `execution`. */
+  periodDuration: bigint | null;
   now: bigint;
   numberOfChoices: bigint;
   numberOfRounds: bigint;

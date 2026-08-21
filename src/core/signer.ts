@@ -1,10 +1,10 @@
 import { readFileSync, statSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
+import type { Hex, PrivateKeyAccount } from "viem";
 import { isHex } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import type { Hex, PrivateKeyAccount } from "viem";
-import { err, ok, type KlerosResult } from "./result.js";
+import { err, type KlerosResult, ok } from "./result.js";
 
 export const HOME_ENV_VAR = "KLEROS_JUROR_HOME";
 export const DEFAULT_HOME = join(homedir(), ".kleros-juror");
@@ -35,15 +35,11 @@ export function loadSigner(home = resolveHome()): KlerosResult<PrivateKeyAccount
   try {
     mode = statSync(path).mode;
   } catch {
-    return err(
-      "KEY_FILE_MISSING",
-      `No signing key at ${path}.`,
-      {
-        hint:
-          `Write the juror's private key there and run: chmod 600 ${path}. ` +
-          "This tool does not accept a key from the environment or the command line.",
-      },
-    );
+    return err("KEY_FILE_MISSING", `No signing key at ${path}.`, {
+      hint:
+        `Write the juror's private key there and run: chmod 600 ${path}. ` +
+        "This tool does not accept a key from the environment or the command line.",
+    });
   }
 
   if ((mode & 0o077) !== 0) {
