@@ -1,6 +1,6 @@
 ---
 name: kleros-juror
-description: Commit and reveal Kleros v2 juror votes on Arbitrum One. Consult this skill when you have been drawn in a Kleros dispute and have already decided a ruling, and need to publish a vote commitment during the commit period or reveal it during the vote period.
+description: Commit and reveal Kleros v2 juror votes on Arbitrum One. Consult this skill when you have been drawn in a Kleros dispute and have already decided how to vote, and need to publish a vote commitment during the commit period or reveal it during the vote period.
 version: 1.0.0
 allowed-tools: "Bash(kleros-juror:*)"
 metadata:
@@ -13,7 +13,7 @@ metadata:
 
 # kleros-juror
 
-Casts a vote you have already decided. It never reads evidence and never chooses a ruling — the
+Casts a vote you have already decided. It never reads evidence and never decides how to vote — the
 choice is always an argument you supply.
 
 Output is JSON on stdout by default. Branch on the `code` field, not on the exit status.

@@ -82,6 +82,11 @@ Layout mirrors `@kleros/agentkit` so the eventual port is close to a file move: 
 `CONTEXT.md` is the glossary — use its terms, avoid the synonyms it lists. `docs/adr/` records the
 five decisions that a reader would otherwise question. Convention: `docs/agents/domain.md`.
 
+The **CLI surface is machine-checked** against that glossary: `vocabulary.test.ts` renders `--help`
+and `--llms-full` and fails on a term no command or option description may ever use. Its list is
+narrower than the `_Avoid_` lines on purpose — read the comment before widening it. Prose is not
+checked, so `README.md` and `CONTEXT.md` may still name a term to contrast it.
+
 `README.md` is the only doc written for a stranger. It restates the command surface, the option
 defaults and the JSON envelope — so a change to any of those is a change to it too.
 

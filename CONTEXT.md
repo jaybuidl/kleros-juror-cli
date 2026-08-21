@@ -25,9 +25,17 @@ _Avoid_: monitoring, polling
 ### The vote
 
 **Choice**:
-The ruling option a juror selects, from `0` to `numberOfChoices`. `0` means refuse to arbitrate and
-is always valid.
+One of the `0..numberOfChoices` options a juror can vote for. `0` means refuse to arbitrate and is
+always valid.
 _Avoid_: ruling, answer, verdict, vote
+
+**Ruling**:
+The arbitrator's *output*: the winning choice `KlerosCore` reports through `currentRuling`, the
+`Ruling` event, and `IArbitrableV2.rule`. Jurors supply choices; the dispute kit aggregates them
+into a winning choice, and only that becomes the ruling. A juror never casts one, and this tool
+never produces one — it is an input away from the end of the pipeline, not the end of it.
+`docs/research/00 §116` calls a choice "the ruling option"; this glossary deliberately overrides it.
+_Avoid_: using it for `--choice`, or for anything a single juror does
 
 **Salt**:
 The `uint256` that blinds a commitment. Always recomputed from the seed, never stored or read back.

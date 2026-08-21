@@ -16,7 +16,7 @@
 ---
 
 > [!IMPORTANT]
-> **This tool casts a vote; it does not decide one.** The ruling is always an input (`--choice`).
+> **This tool casts a vote; it does not decide one.** The choice is always an input (`--choice`).
 > It never reads evidence, never resolves a dispute template, and never discovers which disputes
 > you were drawn in. Deciding happens upstream — a human, an agent, a coin flip, your business.
 
@@ -44,7 +44,7 @@ back up beyond the key you already back up.
 
 | It does | It does not |
 | --- | --- |
-| Publish a commitment (`castCommit`) | Read evidence or decide a ruling |
+| Publish a commitment (`castCommit`) | Read evidence or decide how to vote |
 | Reveal a committed vote (`castVote`) | Discover which disputes you are drawn in |
 | Re-derive salts deterministically | Store salts, seeds, or vote history |
 | Refuse anything that looks wrong, before spending gas | Broadcast anything without `--broadcast` |
@@ -168,7 +168,7 @@ The seed derives salts and nothing else. It authorises no transaction and holds 
 
 | Option | Default | Meaning |
 | --- | --- | --- |
-| `--choice <n>` | *required* | The ruling, `0..numberOfChoices` |
+| `--choice <n>` | *required* | The chosen option to vote for, `0..numberOfChoices` |
 | `--broadcast` | `false` | Actually send. Without it, simulate and stop |
 | `--timeout <s>` | `120` | Seconds to wait for a receipt before reporting the outcome unknown |
 | `--justification <s>` | `""` | *(reveal)* A literal string, `@path`, or `-` for stdin |

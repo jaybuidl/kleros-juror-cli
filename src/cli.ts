@@ -105,13 +105,15 @@ function finish<T>(
 const choiceOption = {
   choice: z
     .string()
-    .describe("Ruling option, 0..numberOfChoices. 0 refuses to arbitrate and is always valid."),
+    .describe(
+      "The chosen option to vote for, 0..numberOfChoices. 0 refuses to arbitrate and is always valid.",
+    ),
 };
 
 const cli = Cli.create("kleros-juror", {
   description:
     "Commit and reveal Kleros v2 juror votes on Arbitrum One. Casts a decision already made " +
-    "elsewhere: it never reads evidence and never chooses a ruling.",
+    "elsewhere: it never reads evidence and never decides how to vote.",
   version: pkg.version,
   // JSON by default: the primary consumer merges stdout and stderr into one
   // buffer, so anything else on stdout breaks parsing. See CLAUDE.md.
