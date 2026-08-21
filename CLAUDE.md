@@ -15,10 +15,11 @@ overrides. A human is a debug surface only, so the CLI must be self-documenting.
 Status: Slice A shipped — `status`, `salt`, `commit`, `reveal`. `vote` and `recover` are next.
 
 ```
-pnpm test         # unit + fork tests (fork tests skip when no fork is reachable)
-pnpm test:fork    # spawn an Arbitrum One fork on :8546 and run only the fork tests
+pnpm test             # unit + fork tests (each fork suite skips when its prerequisite is absent)
+pnpm test:fork        # spawn an Arbitrum One fork on :8546 and run only the fork tests
+pnpm test:acceptance  # commit -> passPeriod -> reveal on a pinned fork; needs KLEROS_ARCHIVE_RPC
 pnpm typecheck
-pnpm lint         # biome check .   (`pnpm exec biome check --write .` to fix)
+pnpm lint             # biome check .   (`pnpm exec biome check --write .` to fix)
 pnpm dev status --dispute 154 --round 0 --votes 0 --address 0x...   # no `--`: it reaches the CLI
 ```
 

@@ -18,9 +18,10 @@ import { deriveSalt } from "../core/salt.js";
  *
  * Skipped when no fork is reachable, so `pnpm test` stays green offline.
  *
- * NOTE: the full commit -> passPeriod -> reveal cycle (`05 §5.3`) is not here.
- * It needs a dispute in the commit period, which means forking at a historical
- * block, which needs an archive RPC. No public Arbitrum endpoint serves one.
+ * These run against the fork at whatever block it was started on, so they assert
+ * only things that hold at every height. The full commit -> passPeriod -> reveal
+ * cycle (`05 §5.3`) needs a dispute caught mid-commit-period, so it pins a
+ * historical block and starts its own fork: see `acceptance.fork.test.ts`.
  */
 const RPC = process.env.KLEROS_FORK_RPC ?? "http://127.0.0.1:8546";
 

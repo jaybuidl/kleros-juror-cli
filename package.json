@@ -20,7 +20,8 @@
     "lint": "biome check .",
     "format": "biome format . --write",
     "typecheck": "tsc --noEmit",
-    "test:fork": "anvil --fork-url ${ARBITRUM_RPC:-https://arb1.arbitrum.io/rpc} --port 8546 --silent & ANVIL=$!; sleep 6; vitest run src/__tests__/fork.test.ts; STATUS=$?; kill $ANVIL; exit $STATUS"
+    "test:fork": "anvil --fork-url ${ARBITRUM_RPC:-https://arb1.arbitrum.io/rpc} --port 8546 --silent & ANVIL=$!; sleep 6; vitest run src/__tests__/fork.test.ts; STATUS=$?; kill $ANVIL; exit $STATUS",
+    "test:acceptance": "KLEROS_ARCHIVE_RPC=${KLEROS_ARCHIVE_RPC:-$(mesc url arbitrum_alchemy 2>/dev/null)} vitest run src/__tests__/acceptance.fork.test.ts"
   },
   "dependencies": {
     "incur": "~0.4.19",

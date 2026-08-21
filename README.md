@@ -278,16 +278,27 @@ is the thin layer that owns argument parsing and output.
 ## Development
 
 ```bash
-pnpm test        # unit + fork tests (fork tests skip when no fork is reachable)
-pnpm test:fork   # spawn an Arbitrum One fork on :8546 and run only the fork tests (needs anvil)
+pnpm test             # unit + fork tests (each fork suite skips when its prerequisite is absent)
+pnpm test:fork        # spawn an Arbitrum One fork on :8546 and run the fork tests (needs anvil)
+pnpm test:acceptance  # the full commit → reveal cycle (needs an archive RPC, see below)
 pnpm typecheck
-pnpm lint        # biome check .   (`pnpm exec biome check --write .` to fix)
+pnpm lint             # biome check .   (`pnpm exec biome check --write .` to fix)
 pnpm build
 pnpm dev status --dispute 154 --round 0 --votes 0 --address 0x…
 ```
 
 The fork tests run against **real deployed bytecode**: they check that our `hashVote` agrees with
 the on-chain hash function and that the derived salt reproduces a known vector end to end.
+
+The acceptance test goes further and exercises the claim the whole design rests on — that a vote
+committed by one process can be revealed by another with nothing carried between them. It pins a
+fork to a block where a real dispute was mid-commit-period, hands those votes to a throwaway key,
+runs `commit` and `reveal` as **separate processes** either side of a `passPeriod`, and asserts the
+vote is recorded on chain. That needs an **archive** RPC, since the fixture block is historical:
+
+```bash
+KLEROS_ARCHIVE_RPC=https://… pnpm test:acceptance
+```
 
 Contract addresses and the ten ABI fragments this tool calls are hand-pinned in
 [`src/core/deployment.ts`](src/core/deployment.ts) rather than imported, because the deployed ABI
@@ -312,7 +323,6 @@ reachable through a dangling link.
 - [ ] `vote` — the single-transaction path for courts without hidden votes
 - [ ] `recover` — brute-force which choice a stored commitment corresponds to, when the choice
       itself has been lost (the seed regenerates the salt, but never the choice)
-- [ ] The full commit → `passPeriod` → reveal acceptance test, which needs an archive RPC
 - [ ] Upstreaming into `@kleros/agentkit` once its write milestone lands
 
 ## Contributing
