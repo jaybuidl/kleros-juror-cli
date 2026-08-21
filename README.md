@@ -75,17 +75,28 @@ been broadcast from it in production**. Treat the first live vote as the shakedo
 
 ## Install
 
-Not published to npm yet. Build from source:
+```bash
+npm install -g kleros-juror-cli      # puts `kleros-juror` on your PATH
+```
+
+That is the right install for a server: 22 packages, the built CLI plus what `incur` and `viem`
+need at runtime. Building from source instead drags the whole toolchain onto the box — tsup,
+vitest, biome and the contracts package with its ethers v5.
+
+<details>
+<summary>From source, to hack on it</summary>
 
 ```bash
 git clone https://github.com/jaybuidl/kleros-juror-cli.git
 cd kleros-juror-cli
 pnpm install
 pnpm build
-pnpm link --global      # puts `kleros-juror` on your PATH
+pnpm link --global
 ```
 
 Or skip the link and run it in place with `pnpm dev status --dispute 154 …`.
+
+</details>
 
 ## Set up the key
 

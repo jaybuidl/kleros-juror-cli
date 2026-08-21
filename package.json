@@ -4,6 +4,23 @@
   "type": "module",
   "description": "Headless CLI for committing and revealing Kleros v2 juror votes on Arbitrum One",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jaybuidl/kleros-juror-cli.git"
+  },
+  "homepage": "https://github.com/jaybuidl/kleros-juror-cli#readme",
+  "bugs": "https://github.com/jaybuidl/kleros-juror-cli/issues",
+  "keywords": [
+    "kleros",
+    "arbitration",
+    "juror",
+    "dispute-resolution",
+    "commit-reveal",
+    "arbitrum",
+    "ethereum",
+    "cli",
+    "agent"
+  ],
   "bin": {
     "kleros-juror": "dist/cli.js"
   },
@@ -15,6 +32,8 @@
   "scripts": {
     "dev": "tsx src/cli.ts",
     "build": "tsup",
+    "prepack": "pnpm build",
+    "prepublishOnly": "pnpm typecheck && pnpm lint && pnpm test",
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "biome check .",
