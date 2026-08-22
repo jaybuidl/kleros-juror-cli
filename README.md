@@ -172,7 +172,7 @@ The seed derives salts and nothing else. It authorises no transaction and holds 
 | `--dispute <id>` | *required* | Core dispute ID (the global one in `KlerosCore`) |
 | `--round <n>` | `0` | Zero-based appeal round index |
 | `--votes <csv>` | *required* | Vote IDs held in this round, e.g. `5,6,7` |
-| `--dispute-kit <k>` | `classic` | `classic`, `gated`, or an address. Shutter kits are refused |
+| `--dispute-kit <k>` | `classic` | `classic`, `gated`, or an address. Shutter kits are refused. `status` reports the kit's registry ID as `disputeKitId` |
 | `--rpc-url <url>` | `ARBITRUM_RPC`, else the public endpoint | Comma-separated for failover |
 | `--home <dir>` | `~/.kleros-juror` | Directory holding the signing key |
 
@@ -312,10 +312,12 @@ vote is recorded on chain. That needs an **archive** RPC, since the fixture bloc
 KLEROS_ARCHIVE_RPC=https://… pnpm test:acceptance
 ```
 
-Contract addresses and the ten ABI fragments this tool calls are hand-pinned in
-[`src/core/deployment.ts`](src/core/deployment.ts) rather than imported, because the deployed ABI
-and the one compiled from `master` differ. `@kleros/kleros-v2-contracts` is a **devDependency** used
-in exactly one file — a canary test that fails the build if anything upstream drifts.
+Contract addresses and ABIs are imported from `@kleros/kleros-v2-contracts` in
+[`src/core/deployment.ts`](src/core/deployment.ts), and the dispute kit registry is read from
+KlerosCore itself, so neither is hand-copied. The package ships the *deployed* artifacts rather than
+something compiled from `master`, which matters because the two differ; a test asserts exactly that
+on every run, and fails the build if upstream drifts. The package is bundled at build time, so it
+stays a **devDependency** and adds nothing to your install.
 
 ## Design docs
 

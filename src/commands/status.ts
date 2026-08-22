@@ -1,4 +1,5 @@
 import { hashVote } from "../core/commitment.js";
+import { ARBITRUM_ONE_CHAIN_ID } from "../core/deployment.js";
 import { type KlerosResult, ok } from "../core/result.js";
 import {
   describeVotes,
@@ -47,8 +48,9 @@ function shapeStatus(prepared: Prepared): Record<string, unknown> {
   return {
     ok: true,
     command: "status",
-    chainId: 42161,
+    chainId: ARBITRUM_ONE_CHAIN_ID,
     disputeKit: prepared.disputeKit.address,
+    disputeKitId: prepared.disputeKit.disputeKitId,
     disputeKitVersion: facts.disputeKitVersion,
     dispute: facts.dispute.toString(),
     round: facts.round.toString(),

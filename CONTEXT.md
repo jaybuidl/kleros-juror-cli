@@ -76,6 +76,12 @@ The pluggable contract implementing a voting method. Classic and Gated are accep
 refused by name.
 _Avoid_: DK (except in the salt `info` string, where it is fixed)
 
+**Dispute kit ID**:
+The index KlerosCore registers a kit under, in `disputeKits[]` — Classic is `1` on Arbitrum One.
+Reported by `status` as `disputeKitId`. It identifies the kit contract, not a dispute; it is
+unrelated to the core dispute ID, and nothing takes it as an argument.
+_Avoid_: kit index, DK ID
+
 **Core dispute ID**:
 The global dispute identifier in `KlerosCore.disputes[]`. What `--dispute` takes. Distinct from the
 kit-internal local dispute ID, which is only needed to read `numberOfChoices`.

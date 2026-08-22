@@ -9,6 +9,8 @@ export { hashVote, isEmptyCommitment } from "./core/commitment.js";
 export {
   ACCEPTED_DISPUTE_KITS,
   ARBITRUM_ONE_CHAIN_ID,
+  type IdentifiedDisputeKit,
+  identifyDisputeKit,
   KLEROS_CORE,
   PERIODS,
   type Period,

@@ -21,6 +21,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { hashVote } from "../core/commitment.js";
 import {
   ACCEPTED_DISPUTE_KITS,
+  ARBITRUM_ONE_CHAIN_ID,
   DISPUTE_KIT_ABI,
   KLEROS_CORE,
   KLEROS_CORE_ABI,
@@ -262,7 +263,7 @@ describe.skipIf(!ARCHIVE_RPC)(
       const seed = await deriveSeedFromSigner((message) => juror.signMessage({ message }));
       if (!seed.success) throw new Error(seed.message);
       const salt = deriveSalt(seed.data, {
-        chainId: 42161,
+        chainId: ARBITRUM_ONE_CHAIN_ID,
         disputeKit: kit.address,
         dispute: DISPUTE,
         round: ROUND,

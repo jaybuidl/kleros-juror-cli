@@ -65,15 +65,18 @@ juror has acted, and `passPeriod` is permissionless. Fail loudly and fast; never
 
 `incur` (pinned as `@kleros/agentkit` pins it) · `viem` · Node >=22. Runtime truth: `package.json`.
 
-Addresses and ABI fragments are **pinned** in `src/core/deployment.ts`, not imported.
-`@kleros/kleros-v2-contracts` is a **devDependency** and appears in exactly one file,
-`deployment.test.ts`, which asserts every pinned address and fragment against its `mainnet` export
-plus both `01 §2` fingerprints. Do not replace the fragments with a package import — `ADR-0005`
-explains why, including the ESM packaging defect that makes it fail at runtime anyway. Do **not**
-add `@kleros/kleros-sdk`; it is a higher-level layer this scope does not need and it drags a
-conflicting zod major.
+Addresses and ABIs are **imported** from `@kleros/kleros-v2-contracts` in `src/core/deployment.ts`,
+never hand-copied. It stays a **devDependency** because tsup bundles it (`ADR-0006`); importing its
+root throws, so use the `cjs/deployments` subpath. `deployment.test.ts` still asserts both `01 §2`
+fingerprints — that is what makes the import safe, and it must keep passing. It also pins the five
+addresses against historical literals: **salt derivation folds in the kit address**, so a moved
+address strands in-flight commitments. Do **not** add `@kleros/kleros-sdk`; it is a higher-level
+layer this scope does not need and it drags a conflicting zod major.
 
-RPC only — no subgraph, no log scanning. Every pre-flight read in `01 §7` is a plain `eth_call`.
+RPC only — no subgraph. Every pre-flight read in `01 §7` is a plain `eth_call`, with one exception:
+`identifyDisputeKit` reads the `DisputeKitCreated` log to map kit addresses to their IDs. That is
+bounded — four events on Arbitrum One — and falls back to `getDisputeKitsLength` / `disputeKits`
+when a fork or a range-capping provider returns nothing.
 
 Layout mirrors `@kleros/agentkit` so the eventual port is close to a file move: framework-free
 `src/core/` returning `KlerosResult<T>`, thin `src/commands/` owning incur and the CTA blocks.
@@ -82,7 +85,7 @@ Layout mirrors `@kleros/agentkit` so the eventual port is close to a file move: 
 ## Domain docs
 
 `CONTEXT.md` is the glossary — use its terms, avoid the synonyms it lists. `docs/adr/` records the
-five decisions that a reader would otherwise question. Convention: `docs/agents/domain.md`.
+six decisions that a reader would otherwise question. Convention: `docs/agents/domain.md`.
 
 The **CLI surface is machine-checked** against that glossary: `vocabulary.test.ts` renders `--help`
 and `--llms-full` and fails on a term no command or option description may ever use. Its list is

@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { type BroadcastResult, simulateAndMaybeBroadcast } from "../core/broadcast.js";
 import { hashVote, isEmptyCommitment } from "../core/commitment.js";
+import { ARBITRUM_ONE_CHAIN_ID } from "../core/deployment.js";
 import { err, type KlerosResult, ok } from "../core/result.js";
 import {
   type Prepared,
@@ -176,7 +177,7 @@ function envelope(
     ok: outcome.status === "mined" || outcome.status === "simulated",
     command,
     message,
-    chainId: 42161,
+    chainId: ARBITRUM_ONE_CHAIN_ID,
     disputeKit: prepared.disputeKit.address,
     dispute: prepared.dispute.toString(),
     round: prepared.round.toString(),

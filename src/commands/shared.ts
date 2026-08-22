@@ -1,7 +1,13 @@
 import { z } from "incur";
 import type { Address, PrivateKeyAccount, PublicClient } from "viem";
 import { assertArbitrumOne, createKlerosClient, parseRpcUrls } from "../core/client.js";
-import { type ResolvedDisputeKit, resolveDisputeKit } from "../core/deployment.js";
+import {
+  ARBITRUM_ONE_CHAIN_ID,
+  type IdentifiedDisputeKit,
+  identifyDisputeKit,
+  type ResolvedDisputeKit,
+  resolveDisputeKit,
+} from "../core/deployment.js";
 import { checkPreflight, type PreflightFacts, type VoteAction } from "../core/preflight.js";
 import { readPreflightFacts, versionWarning } from "../core/read-preflight.js";
 import { err, type KlerosResult, ok } from "../core/result.js";
@@ -45,6 +51,7 @@ const EXIT_CODES: Record<string, number> = {
   UNKNOWN_PERIOD: 3,
   SIMULATION_REVERTED: 4,
   BROADCAST_FAILED: 5,
+  DISPUTE_KIT_LOOKUP_FAILED: 7,
   RPC_ERROR: 7,
 };
 
@@ -153,7 +160,7 @@ export function prepareLocal(
 export type Prepared = {
   client: PublicClient;
   rpcUrls: string[];
-  disputeKit: ResolvedDisputeKit;
+  disputeKit: IdentifiedDisputeKit;
   dispute: bigint;
   round: bigint;
   voteIds: CanonicalVoteIds;
@@ -181,6 +188,12 @@ export async function prepare(options: PrepareOptions): Promise<KlerosResult<Pre
   const chain = await assertArbitrumOne(client);
   if (!chain.success) return chain;
 
+  // Only after the chain is confirmed: the registry lookup is scoped to a deployment,
+  // so trusting it on an unverified chain would be reading the wrong core.
+  const identified = await identifyDisputeKit(client, kitData);
+  if (!identified.success) return identified;
+  const disputeKit = identified.data;
+
   const juror = (account?.address ?? options.address) as Address | undefined;
   if (!juror) {
     return err(
@@ -192,7 +205,7 @@ export async function prepare(options: PrepareOptions): Promise<KlerosResult<Pre
 
   const facts = await readPreflightFacts({
     client,
-    disputeKit: kitData,
+    disputeKit,
     dispute,
     round,
     voteIds: voteIds.ids,
@@ -208,7 +221,7 @@ export async function prepare(options: PrepareOptions): Promise<KlerosResult<Pre
   return ok({
     client,
     rpcUrls,
-    disputeKit: kitData,
+    disputeKit,
     dispute,
     round,
     voteIds,
@@ -260,7 +273,7 @@ export async function resolveSalt(
 
   return ok(
     deriveSalt(seed.data, {
-      chainId: 42161,
+      chainId: ARBITRUM_ONE_CHAIN_ID,
       disputeKit: prepared.disputeKit.address,
       dispute: prepared.dispute,
       round: prepared.round,

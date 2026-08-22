@@ -1,5 +1,10 @@
 # ABI fragments are pinned in-repo; the contracts package is a test-only canary
 
+> **Superseded by [ADR-0006](0006-deployment-imported-from-contracts-package.md).** The `01 §2`
+> requirement below still holds, but the package ships the deployed artifacts, so importing it
+> satisfies that requirement rather than violating it — as the fingerprint tests this ADR
+> introduced have always demonstrated. Kept for the reasoning, not as current practice.
+
 `01 §2` requires binding to the **deployed** ABI and forbids one compiled from
 `master` — the deployed dispute kit reverts with `require` strings and exposes a single
 `getDegreeOfCoherence`, where `master` has custom errors and a Reward/Penalty pair. Importing an
