@@ -100,6 +100,13 @@ _Avoid_: phase, stage
 `lastPeriodChange + timesPerPeriod[period]`. An upper bound, never an entitlement — both the commit
 and the vote period end early once every juror has acted, and `passPeriod` is permissionless.
 
+**Period duration**:
+`timesPerPeriod[period]` — the *nominal* budget a period is allowed, and never the time it actually
+took. The two come apart whenever a period ends early: the duration is unchanged, the elapsed time
+is shorter. Undefined for `execution`, which has no budget.
+_Avoid_: budget, window length; and never "duration" for the time a period actually took — that is
+elapsed time
+
 **Neo**:
 The name of the Arbitrum One production deployment, as in `DisputeKitClassicNeo`. A deployment
 name, not a contract.
