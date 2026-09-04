@@ -74,9 +74,11 @@ address strands in-flight commitments. Do **not** add `@kleros/kleros-sdk`; it i
 layer this scope does not need and it drags a conflicting zod major.
 
 RPC only — no subgraph. Every pre-flight read in `01 §7` is a plain `eth_call`, with one exception:
-`identifyDisputeKit` reads the `DisputeKitCreated` log to map kit addresses to their IDs. That is
-bounded — four events on Arbitrum One — and falls back to `getDisputeKitsLength` / `disputeKits`
-when a fork or a range-capping provider returns nothing.
+`identifyDisputeKit` reads the `DisputeKitCreated` log to map kit addresses to their IDs. Its
+**results** are bounded — four events on Arbitrum One — but the query itself is full-range and
+**unfiltered** (`fromBlock: 0n`, no topic filter), so it falls back to `getDisputeKitsLength` /
+`disputeKits` when a fork or a range-capping provider returns nothing. Do not read "bounded" as a
+bounded *query*: a topic-filtered log read is cheaper than what this already does.
 
 Layout mirrors `@kleros/agentkit` so the eventual port is close to a file move: framework-free
 `src/core/` returning `KlerosResult<T>`, thin `src/commands/` owning incur and the CTA blocks.
